@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-yellow-400: #FACC15;
+  --color-blue-500: #3B82F6;
+  --color-red-500: #EF4444;
+  --color-green-500: #22C55E;
+  --color-amber-500: #F59E0B;
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-yellow-400);
+    color: #000;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .neobrutalism-card {
+    background-color: #fff;
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .neobrutalism-card:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  .neobrutalism-button {
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .neobrutalism-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+  }
+  
+  .neobrutalism-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  }
+}
