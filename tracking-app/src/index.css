@@ -12,10 +12,19 @@
 
 @layer base {
   body {
-    background-color: var(--color-yellow-400);
+    background: linear-gradient(-45deg, #ff71ce, #01cdfe, #05ffa1, #b967ff);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     color: #000;
     font-family: var(--font-sans);
+    min-height: 100vh;
   }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @layer utilities {
@@ -27,8 +36,8 @@
   }
   
   .neobrutalism-card:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+    transform: translate(-4px, -4px);
+    box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
   }
 
   .neobrutalism-button {
@@ -45,7 +54,7 @@
   }
   
   .neobrutalism-button:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
   }
 }

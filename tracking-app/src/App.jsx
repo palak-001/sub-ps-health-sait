@@ -10,11 +10,13 @@ import { StreakCalendar } from "./components/StreakCalendar";
 import { TrendChart } from "./components/TrendChart";
 import { SettingsModal } from "./components/SettingsModal";
 import { TipEngine } from "./components/TipEngine";
+import { HabitBlocksMatter } from "./components/HabitBlocksMatter";
 
 export default function App() {
   const [targets, setTargets] = useLocalStorage("habit-targets", DEFAULT_TARGETS);
   const [history, setHistory] = useLocalStorage("habit-history", {});
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activePage, setActivePage] = useState("home"); // "home" or "wellness"
 
   const todayStr = format(new Date(), "yyyy-MM-dd");
 
@@ -114,7 +116,19 @@ export default function App() {
             </div>
             <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">Habit Tracker</h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <button 
+              onClick={() => setActivePage("home")}
+              className={`neobrutalism-button py-2 px-4 flex items-center gap-2 text-sm ${activePage === "home" ? "bg-yellow-400" : "bg-white"}`}
+            >
+              Home
+            </button>
+            <button 
+              onClick={() => setActivePage("wellness")}
+              className={`neobrutalism-button py-2 px-4 flex items-center gap-2 text-sm ${activePage === "wellness" ? "bg-yellow-400" : "bg-white"}`}
+            >
+              Wellness Score
+            </button>
             <button 
               onClick={fillMockData}
               className="neobrutalism-button bg-pink-400 py-2 px-4 flex items-center gap-2 text-sm"
@@ -131,34 +145,63 @@ export default function App() {
           </div>
         </header>
 
-        <ScoreDisplay score={history[todayStr]?.score || 0} />
-
-        {/* Daily Habits Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {HABIT_DEFINITIONS.map(habit => {
-            const actual = todayDetails[habit.id]?.actual;
-            const target = targets[habit.id];
+        {activePage === "home" ? (
+          <HabitBlocksMatter />
+        ) : (
+          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <ScoreDisplay score={history[todayStr]?.score || 0} />
             
-            return (
-              <HabitCard 
-                key={habit.id}
-                habit={habit}
-                target={target}
-                currentValue={actual ?? (habit.type === "number" ? 0 : false)}
-                onComplete={() => handleUpdateToday(habit.id, target)}
-                onToggle={(val) => handleUpdateToday(habit.id, val)}
-              />
-            );
-          })}
-        </div>
+            {/* Daily Habits Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {HABIT_DEFINITIONS.map(habit => {
+                const actual = todayDetails[habit.id]?.actual;
+                const target = targets[habit.id];
+                const defaultValue = habit.type === "number" ? 0 : false;
+                const currentValue = actual ?? defaultValue;
 
-        <StreakCalendar last7DaysData={last7DaysData} />
-        
-        <TrendChart last7DaysData={last7DaysData} />
+                const handleIncrement = () => {
+                  if (habit.type === "number") {
+                    const current = Number(currentValue) || 0;
+                    const goal = Number(target) || 0;
+                    handleUpdateToday(habit.id, Math.min(current + 1, goal));
+                    return;
+                  }
 
-        <TipEngine last7DaysData={last7DaysData} />
+                  handleUpdateToday(habit.id, true);
+                };
+
+                const handleDecrement = () => {
+                  if (habit.type === "number") {
+                    const current = Number(currentValue) || 0;
+                    handleUpdateToday(habit.id, Math.max(current - 1, 0));
+                    return;
+                  }
+
+                  handleUpdateToday(habit.id, false);
+                };
+                
+                return (
+                  <HabitCard 
+                    key={habit.id}
+                    habit={habit}
+                    target={target}
+                    currentValue={currentValue}
+                    onIncrement={handleIncrement}
+                    onDecrement={handleDecrement}
+                  />
+                );
+              })}
+            </div>
+
+            <StreakCalendar last7DaysData={last7DaysData} />
+            <TrendChart last7DaysData={last7DaysData} />
+            <TipEngine last7DaysData={last7DaysData} />
+          </div>
+        )}
 
       </div>
+
+
 
       {isSettingsOpen && (
         <SettingsModal 
